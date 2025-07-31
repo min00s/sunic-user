@@ -1,8 +1,7 @@
-package com.sunic.user.spec.facade.userworkspace.sdo;
+package com.sunic.user.spec.facade.userworkspace.vo;
 
-import com.sunic.user.spec.entity.UserWorkspaceState;
-import com.sunic.user.spec.entity.UserWorkspaceType;
-
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceState;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class UserWorkspaceModifySdo {
+public class UserWorkspaceUdo {
     private Integer id;
     private String name;
     private String description;

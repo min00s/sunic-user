@@ -1,14 +1,12 @@
 package com.sunic.user.aggregate.userworkspace.store;
 
-import java.util.Optional;
-
-import org.springframework.stereotype.Component;
-
 import com.sunic.user.aggregate.user.store.jpo.UserWorkspaceJpo;
 import com.sunic.user.aggregate.user.store.repository.UserWorkspaceRepository;
-import com.sunic.user.spec.entity.UserWorkspace;
-
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

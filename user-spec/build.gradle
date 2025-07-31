@@ -3,4 +3,5 @@ dependencies {
     implementation 'org.springframework:spring-context'
     implementation 'jakarta.validation:jakarta.validation-api'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 }

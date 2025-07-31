@@ -1,29 +1,25 @@
 package com.sunic.user.aggregate.userworkspace.logic;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.sunic.user.aggregate.userworkspace.store.UserWorkspaceStore;
-import com.sunic.user.spec.entity.UserWorkspace;
-import com.sunic.user.spec.entity.UserWorkspaceState;
 import com.sunic.user.spec.exception.WorkspaceAlreadyExistsException;
 import com.sunic.user.spec.exception.WorkspaceNotFoundException;
-import com.sunic.user.spec.facade.userworkspace.UserWorkspaceFacade;
-import com.sunic.user.spec.facade.userworkspace.rdo.UserWorkspaceRdo;
-import com.sunic.user.spec.facade.userworkspace.sdo.UserWorkspaceModifySdo;
-import com.sunic.user.spec.facade.userworkspace.sdo.UserWorkspaceRegisterSdo;
-
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceState;
+import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceCdo;
+import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceRdo;
+import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceUdo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserWorkspaceLogic implements UserWorkspaceFacade {
+public class UserWorkspaceLogic {
     private final UserWorkspaceStore userWorkspaceStore;
 
-    @Override
     @Transactional
-    public Integer registerUserWorkspace(UserWorkspaceRegisterSdo userWorkspaceRegisterSdo) {
+    public Integer registerUserWorkspace(UserWorkspaceCdo userWorkspaceRegisterSdo) {
         if (userWorkspaceStore.existsByName(userWorkspaceRegisterSdo.getName())) {
             throw new WorkspaceAlreadyExistsException("Workspace with name already exists: " + userWorkspaceRegisterSdo.getName());
         }
@@ -38,7 +34,6 @@ public class UserWorkspaceLogic implements UserWorkspaceFacade {
         return savedWorkspace.getId();
     }
 
-    @Override
     public UserWorkspaceRdo retrieveUserWorkspace(Integer id) {
         UserWorkspace workspace = userWorkspaceStore.findById(id)
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + id));
@@ -56,9 +51,8 @@ public class UserWorkspaceLogic implements UserWorkspaceFacade {
                 .build();
     }
 
-    @Override
     @Transactional
-    public String modifyUserWorkspace(UserWorkspaceModifySdo userWorkspaceModifySdo) {
+    public String modifyUserWorkspace(UserWorkspaceUdo userWorkspaceModifySdo) {
         UserWorkspace workspace = userWorkspaceStore.findById(userWorkspaceModifySdo.getId())
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + userWorkspaceModifySdo.getId()));
 
@@ -80,7 +74,6 @@ public class UserWorkspaceLogic implements UserWorkspaceFacade {
         return "Workspace modified successfully";
     }
 
-    @Override
     @Transactional
     public void deleteUserWorkspace(Integer id) {
         UserWorkspace workspace = userWorkspaceStore.findById(id)

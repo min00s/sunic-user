@@ -1,23 +1,21 @@
 package com.sunic.user.aggregate.user.store;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Component;
-
 import com.sunic.user.aggregate.user.store.jpo.DeactivatedUserJpo;
 import com.sunic.user.aggregate.user.store.jpo.UserJpo;
 import com.sunic.user.aggregate.user.store.jpo.UserWorkspaceJpo;
 import com.sunic.user.aggregate.user.store.repository.DeactivatedUserRepository;
 import com.sunic.user.aggregate.user.store.repository.UserRepository;
 import com.sunic.user.aggregate.user.store.repository.UserWorkspaceRepository;
-import com.sunic.user.spec.entity.DeactivatedUser;
-import com.sunic.user.spec.entity.User;
-import com.sunic.user.spec.entity.UserWorkspace;
-
+import com.sunic.user.spec.facade.user.entity.DeactivatedUser;
+import com.sunic.user.spec.facade.user.entity.User;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor

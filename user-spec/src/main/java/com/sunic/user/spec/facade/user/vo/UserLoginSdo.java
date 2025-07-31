@@ -1,4 +1,4 @@
-package com.sunic.user.spec.facade.user.sdo;
+package com.sunic.user.spec.facade.user.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

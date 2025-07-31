@@ -1,39 +1,31 @@
 package com.sunic.user.aggregate.user.logic;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.sunic.user.aggregate.user.store.UserStore;
+import com.sunic.user.spec.exception.*;
+import com.sunic.user.spec.facade.user.entity.DeactivatedUser;
+import com.sunic.user.spec.facade.user.entity.User;
+import com.sunic.user.spec.facade.user.vo.UserJoinSdo;
+import com.sunic.user.spec.facade.user.vo.UserLoginRdo;
+import com.sunic.user.spec.facade.user.vo.UserLoginSdo;
+import com.sunic.user.spec.facade.user.vo.UserRegisterSdo;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
+import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceRdo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sunic.user.aggregate.user.store.UserStore;
-import com.sunic.user.spec.entity.DeactivatedUser;
-import com.sunic.user.spec.entity.User;
-import com.sunic.user.spec.entity.UserWorkspace;
-import com.sunic.user.spec.exception.InvalidCredentialsException;
-import com.sunic.user.spec.exception.UserAlreadyExistsException;
-import com.sunic.user.spec.exception.UserNotFoundException;
-import com.sunic.user.spec.exception.UserWorkspaceAlreadyExistsException;
-import com.sunic.user.spec.exception.WorkspaceNotFoundException;
-import com.sunic.user.spec.facade.user.UserFacade;
-import com.sunic.user.spec.facade.user.rdo.UserLoginRdo;
-import com.sunic.user.spec.facade.user.sdo.UserJoinSdo;
-import com.sunic.user.spec.facade.user.sdo.UserLoginSdo;
-import com.sunic.user.spec.facade.user.sdo.UserRegisterSdo;
-import com.sunic.user.spec.facade.userworkspace.rdo.UserWorkspaceRdo;
-
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserLogic implements UserFacade {
+public class UserLogic {
     private final UserStore userStore;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
     @Transactional
     public void registerUser(UserRegisterSdo userRegisterSdo) {
         if (userStore.existsByEmail(userRegisterSdo.getEmail())) {
@@ -51,7 +43,6 @@ public class UserLogic implements UserFacade {
         userStore.save(user);
     }
 
-    @Override
     public UserLoginRdo loginUser(UserLoginSdo userLoginSdo) {
         User user = userStore.findByEmail(userLoginSdo.getEmail())
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
@@ -75,7 +66,6 @@ public class UserLogic implements UserFacade {
                 .build();
     }
 
-    @Override
     @Transactional
     public void deactivateUser() {
         LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
@@ -89,7 +79,6 @@ public class UserLogic implements UserFacade {
         }
     }
 
-    @Override
     @Transactional
     public void joinWorkspace(UserJoinSdo userJoinSdo) {
         User user = userStore.findById(userJoinSdo.getUserId())
@@ -110,13 +99,7 @@ public class UserLogic implements UserFacade {
             return List.of();
         }
         return userWorkspaces.stream()
-                .map(workspace -> UserWorkspaceRdo.builder()
-                        .id(workspace.getId())
-                        .name(workspace.getName())
-                        .description(workspace.getDescription())
-                        .type(workspace.getType())
-                        .state(workspace.getState())
-                        .build())
+                .map(UserWorkspace::toRdo)
                 .collect(Collectors.toList());
     }
 }

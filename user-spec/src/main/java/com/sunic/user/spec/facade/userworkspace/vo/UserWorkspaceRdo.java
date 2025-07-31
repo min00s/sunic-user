@@ -1,8 +1,7 @@
-package com.sunic.user.spec.facade.userworkspace.rdo;
+package com.sunic.user.spec.facade.userworkspace.vo;
 
-import com.sunic.user.spec.entity.UserWorkspaceState;
-import com.sunic.user.spec.entity.UserWorkspaceType;
-
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceState;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

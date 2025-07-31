@@ -1,4 +1,4 @@
-package com.sunic.user.spec.entity;
+package com.sunic.user.spec.facade.userworkspace.entity;
 
 public enum UserWorkspaceState {
     Active,

@@ -1,16 +1,9 @@
 package com.sunic.user.aggregate.user.store.jpo;
 
-import com.sunic.user.spec.entity.UserWorkspace;
-import com.sunic.user.spec.entity.UserWorkspaceState;
-import com.sunic.user.spec.entity.UserWorkspaceType;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceState;
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

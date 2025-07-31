@@ -1,12 +1,13 @@
-package com.sunic.user.spec.entity;
+package com.sunic.user.spec.facade.user.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor

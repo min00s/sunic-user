@@ -1,19 +1,11 @@
 package com.sunic.user.rest.config;
 
+import com.sunic.user.spec.common.vo.ErrorResponse;
+import com.sunic.user.spec.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import com.sunic.user.spec.common.rdo.ErrorResponse;
-import com.sunic.user.spec.exception.InvalidCredentialsException;
-import com.sunic.user.spec.exception.InvalidWorkspaceStateException;
-import com.sunic.user.spec.exception.UserAlreadyExistsException;
-import com.sunic.user.spec.exception.UserNotFoundException;
-import com.sunic.user.spec.exception.UserWorkspaceAlreadyExistsException;
-import com.sunic.user.spec.exception.WorkspaceAccessDeniedException;
-import com.sunic.user.spec.exception.WorkspaceAlreadyExistsException;
-import com.sunic.user.spec.exception.WorkspaceNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

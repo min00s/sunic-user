@@ -1,13 +1,12 @@
-package com.sunic.user.spec.facade.user.rdo;
+package com.sunic.user.spec.facade.user.vo;
 
-import java.util.List;
-
-import com.sunic.user.spec.facade.userworkspace.rdo.UserWorkspaceRdo;
-
+import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceRdo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor

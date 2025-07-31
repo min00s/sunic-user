@@ -1,7 +1,6 @@
-package com.sunic.user.spec.facade.userworkspace.sdo;
+package com.sunic.user.spec.facade.userworkspace.vo;
 
-import com.sunic.user.spec.entity.UserWorkspaceType;
-
+import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class UserWorkspaceRegisterSdo {
+public class UserWorkspaceCdo {
     private String name;
     private String description;
     private UserWorkspaceType type;

@@ -1,4 +1,4 @@
-package com.sunic.user.spec.common.rdo;
+package com.sunic.user.spec.common.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

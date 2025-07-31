@@ -1,9 +1,11 @@
-package com.sunic.user.spec.entity;
+package com.sunic.user.spec.facade.userworkspace.entity;
 
+import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceRdo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 @Getter
 @NoArgsConstructor
@@ -61,5 +63,11 @@ public class UserWorkspace {
                 .modifiedTime(System.currentTimeMillis())
                 .modifier(modifier)
                 .build();
+    }
+
+    public UserWorkspaceRdo toRdo() {
+        UserWorkspaceRdo rdo = new UserWorkspaceRdo();
+        BeanUtils.copyProperties(this, rdo);
+        return rdo;
     }
 }

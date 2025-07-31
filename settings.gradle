@@ -1,0 +1,12 @@
+pluginManagement {
+	repositories {
+		maven { url = 'https://repo.spring.io/snapshot' }
+		gradlePluginPortal()
+	}
+}
+rootProject.name = 'user-service'
+include 'user-spec'
+include 'user-aggregate'
+include 'user-rest'
+include 'user-client'
+include 'user-boot'

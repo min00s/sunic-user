@@ -1,0 +1,6 @@
+dependencies {
+    // Minimal dependencies - only essential annotations
+    implementation 'org.springframework:spring-context'
+    implementation 'jakarta.validation:jakarta.validation-api'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+}

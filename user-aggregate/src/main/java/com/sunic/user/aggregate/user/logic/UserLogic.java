@@ -1,0 +1,133 @@
+package com.sunic.user.aggregate.user.logic;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.sunic.user.aggregate.user.store.UserStore;
+import com.sunic.user.spec.entity.DeactivatedUser;
+import com.sunic.user.spec.entity.User;
+import com.sunic.user.spec.entity.UserWorkspace;
+import com.sunic.user.spec.exception.InvalidCredentialsException;
+import com.sunic.user.spec.exception.UserAlreadyExistsException;
+import com.sunic.user.spec.exception.UserNotFoundException;
+import com.sunic.user.spec.exception.UserWorkspaceAlreadyExistsException;
+import com.sunic.user.spec.exception.WorkspaceNotFoundException;
+import com.sunic.user.spec.facade.user.UserFacade;
+import com.sunic.user.spec.facade.user.rdo.UserLoginRdo;
+import com.sunic.user.spec.facade.user.sdo.UserJoinSdo;
+import com.sunic.user.spec.facade.user.sdo.UserLoginSdo;
+import com.sunic.user.spec.facade.user.sdo.UserRegisterSdo;
+import com.sunic.user.spec.facade.userworkspace.rdo.UserWorkspaceRdo;
+
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class UserLogic implements UserFacade {
+    private final UserStore userStore;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    @Transactional
+    public void registerUser(UserRegisterSdo userRegisterSdo) {
+        if (userStore.existsByEmail(userRegisterSdo.getEmail())) {
+            throw new UserAlreadyExistsException("User with email already exists: " + userRegisterSdo.getEmail());
+        }
+
+        User user = User.builder()
+                .email(userRegisterSdo.getEmail())
+                .name(userRegisterSdo.getName())
+                .password(passwordEncoder.encode(userRegisterSdo.getPassword()))
+                .phone(userRegisterSdo.getPhone())
+                .birthYear(userRegisterSdo.getBirthYear())
+                .gender(userRegisterSdo.getGender())
+                .loginFailCount(0)
+                .build();
+
+        userStore.save(user);
+    }
+
+    @Override
+    public UserLoginRdo loginUser(UserLoginSdo userLoginSdo) {
+        User user = userStore.findByEmail(userLoginSdo.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(userLoginSdo.getPassword(), user.getPassword())) {
+            User updatedUser = user.updateLoginFailCount();
+            userStore.save(updatedUser);
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        User updatedUser = user.resetLoginFailCount();
+        userStore.save(updatedUser);
+
+        return UserLoginRdo.builder()
+                .id(updatedUser.getId())
+                .email(updatedUser.getEmail())
+                .name(updatedUser.getName())
+                .phone(updatedUser.getPhone())
+                .gender(updatedUser.getGender())
+                .userWorkspaces(convertToWorkspaceRdos(updatedUser.getUserWorkspaces()))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public void deactivateUser() {
+        LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
+        List<User> inactiveUsers = userStore.findUsersInactiveForMoreThanOneYear(oneYearAgo);
+
+        for (User user : inactiveUsers) {
+            DeactivatedUser deactivatedUser = DeactivatedUser.builder()
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .password(user.getPassword())
+                    .phone(user.getPhone())
+                    .birthYear(user.getBirthYear())
+                    .gender(user.getGender())
+                    .userWorkspaces(user.getUserWorkspaces())
+                    .loginFailCount(user.getLoginFailCount())
+                    .build();
+
+            userStore.saveDeactivatedUser(deactivatedUser);
+            userStore.deleteUser(user);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void joinWorkspace(UserJoinSdo userJoinSdo) {
+        User user = userStore.findById(userJoinSdo.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userJoinSdo.getUserId()));
+
+        UserWorkspace workspace = userStore.findWorkspaceById(userJoinSdo.getWorkspaceId())
+                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + userJoinSdo.getWorkspaceId()));
+
+        if (user.getUserWorkspaces() != null && user.getUserWorkspaces().contains(workspace)) {
+            throw new UserWorkspaceAlreadyExistsException("Already joined to this workspace");
+        }
+
+        userStore.save(user);
+    }
+
+    private List<UserWorkspaceRdo> convertToWorkspaceRdos(List<UserWorkspace> userWorkspaces) {
+        if (userWorkspaces == null) {
+            return List.of();
+        }
+        return userWorkspaces.stream()
+                .map(workspace -> UserWorkspaceRdo.builder()
+                        .id(workspace.getId())
+                        .name(workspace.getName())
+                        .description(workspace.getDescription())
+                        .type(workspace.getType())
+                        .state(workspace.getState())
+                        .build())
+                .collect(Collectors.toList());
+    }
+}

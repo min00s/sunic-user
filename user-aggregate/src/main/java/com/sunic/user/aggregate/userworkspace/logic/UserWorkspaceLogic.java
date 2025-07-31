@@ -28,16 +28,11 @@ public class UserWorkspaceLogic implements UserWorkspaceFacade {
             throw new WorkspaceAlreadyExistsException("Workspace with name already exists: " + userWorkspaceRegisterSdo.getName());
         }
 
-        UserWorkspace workspace = UserWorkspace.builder()
-                .name(userWorkspaceRegisterSdo.getName())
-                .description(userWorkspaceRegisterSdo.getDescription())
-                .state(UserWorkspaceState.Active)
-                .type(userWorkspaceRegisterSdo.getType())
-                .registeredTime(System.currentTimeMillis())
-                .registrant(userWorkspaceRegisterSdo.getRegistrant())
-                .modifiedTime(System.currentTimeMillis())
-                .modifier(userWorkspaceRegisterSdo.getRegistrant())
-                .build();
+        UserWorkspace workspace = UserWorkspace.create(
+                userWorkspaceRegisterSdo.getName(),
+                userWorkspaceRegisterSdo.getDescription(),
+                userWorkspaceRegisterSdo.getType(),
+                userWorkspaceRegisterSdo.getRegistrant());
 
         UserWorkspace savedWorkspace = userWorkspaceStore.save(workspace);
         return savedWorkspace.getId();
@@ -67,17 +62,19 @@ public class UserWorkspaceLogic implements UserWorkspaceFacade {
         UserWorkspace workspace = userWorkspaceStore.findById(userWorkspaceModifySdo.getId())
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + userWorkspaceModifySdo.getId()));
 
-        UserWorkspace updatedWorkspace = UserWorkspace.builder()
-                .id(workspace.getId())
-                .name(userWorkspaceModifySdo.getName() != null ? userWorkspaceModifySdo.getName() : workspace.getName())
-                .description(userWorkspaceModifySdo.getDescription() != null ? userWorkspaceModifySdo.getDescription() : workspace.getDescription())
-                .state(userWorkspaceModifySdo.getState() != null ? userWorkspaceModifySdo.getState() : workspace.getState())
-                .type(userWorkspaceModifySdo.getType() != null ? userWorkspaceModifySdo.getType() : workspace.getType())
-                .registeredTime(workspace.getRegisteredTime())
-                .registrant(workspace.getRegistrant())
-                .modifiedTime(System.currentTimeMillis())
-                .modifier(userWorkspaceModifySdo.getModifier() != null ? userWorkspaceModifySdo.getModifier() : workspace.getModifier())
-                .build();
+        String newName = userWorkspaceModifySdo.getName() != null ? userWorkspaceModifySdo.getName() : workspace.getName();
+        String newDescription = userWorkspaceModifySdo.getDescription() != null ? userWorkspaceModifySdo.getDescription() : workspace.getDescription();
+        Integer modifier = userWorkspaceModifySdo.getModifier() != null ? userWorkspaceModifySdo.getModifier() : workspace.getModifier();
+        
+        UserWorkspace updatedWorkspace;
+        if (userWorkspaceModifySdo.getState() != null && !userWorkspaceModifySdo.getState().equals(workspace.getState())) {
+            updatedWorkspace = workspace.changeState(userWorkspaceModifySdo.getState(), modifier);
+            if (!newName.equals(workspace.getName()) || !newDescription.equals(workspace.getDescription())) {
+                updatedWorkspace = updatedWorkspace.modify(newName, newDescription, modifier);
+            }
+        } else {
+            updatedWorkspace = workspace.modify(newName, newDescription, modifier);
+        }
 
         userWorkspaceStore.save(updatedWorkspace);
         return "Workspace modified successfully";
@@ -89,17 +86,7 @@ public class UserWorkspaceLogic implements UserWorkspaceFacade {
         UserWorkspace workspace = userWorkspaceStore.findById(id)
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + id));
 
-        UserWorkspace deletedWorkspace = UserWorkspace.builder()
-                .id(workspace.getId())
-                .name(workspace.getName())
-                .description(workspace.getDescription())
-                .state(UserWorkspaceState.Removed)
-                .type(workspace.getType())
-                .registeredTime(workspace.getRegisteredTime())
-                .registrant(workspace.getRegistrant())
-                .modifiedTime(System.currentTimeMillis())
-                .modifier(workspace.getModifier())
-                .build();
+        UserWorkspace deletedWorkspace = workspace.changeState(UserWorkspaceState.Removed, workspace.getModifier());
 
         userWorkspaceStore.save(deletedWorkspace);
     }

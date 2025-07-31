@@ -1,4 +1,4 @@
-package com.sunic.user.rest.config.dto;
+package com.sunic.user.spec.common.rdo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

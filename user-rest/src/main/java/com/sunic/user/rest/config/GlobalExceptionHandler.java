@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.sunic.user.rest.config.dto.ErrorResponse;
+import com.sunic.user.spec.common.rdo.ErrorResponse;
 import com.sunic.user.spec.exception.InvalidCredentialsException;
 import com.sunic.user.spec.exception.InvalidWorkspaceStateException;
 import com.sunic.user.spec.exception.UserAlreadyExistsException;

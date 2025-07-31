@@ -2,7 +2,7 @@ package com.sunic.user.rest.rest.user.docs;
 
 import org.springframework.http.ResponseEntity;
 
-import com.sunic.user.rest.config.dto.BaseResponse;
+import com.sunic.user.spec.common.rdo.BaseResponse;
 import com.sunic.user.spec.facade.user.sdo.UserJoinSdo;
 import com.sunic.user.spec.facade.user.sdo.UserLoginSdo;
 import com.sunic.user.spec.facade.user.sdo.UserRegisterSdo;

@@ -40,15 +40,13 @@ public class UserLogic implements UserFacade {
             throw new UserAlreadyExistsException("User with email already exists: " + userRegisterSdo.getEmail());
         }
 
-        User user = User.builder()
-                .email(userRegisterSdo.getEmail())
-                .name(userRegisterSdo.getName())
-                .password(passwordEncoder.encode(userRegisterSdo.getPassword()))
-                .phone(userRegisterSdo.getPhone())
-                .birthYear(userRegisterSdo.getBirthYear())
-                .gender(userRegisterSdo.getGender())
-                .loginFailCount(0)
-                .build();
+        User user = User.create(
+                userRegisterSdo.getEmail(),
+                userRegisterSdo.getName(),
+                passwordEncoder.encode(userRegisterSdo.getPassword()),
+                userRegisterSdo.getPhone(),
+                userRegisterSdo.getBirthYear(),
+                userRegisterSdo.getGender());
 
         userStore.save(user);
     }
@@ -84,16 +82,7 @@ public class UserLogic implements UserFacade {
         List<User> inactiveUsers = userStore.findUsersInactiveForMoreThanOneYear(oneYearAgo);
 
         for (User user : inactiveUsers) {
-            DeactivatedUser deactivatedUser = DeactivatedUser.builder()
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .password(user.getPassword())
-                    .phone(user.getPhone())
-                    .birthYear(user.getBirthYear())
-                    .gender(user.getGender())
-                    .userWorkspaces(user.getUserWorkspaces())
-                    .loginFailCount(user.getLoginFailCount())
-                    .build();
+            DeactivatedUser deactivatedUser = DeactivatedUser.fromUser(user);
 
             userStore.saveDeactivatedUser(deactivatedUser);
             userStore.deleteUser(user);

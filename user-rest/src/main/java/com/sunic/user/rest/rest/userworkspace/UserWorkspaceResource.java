@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sunic.user.rest.config.dto.BaseResponse;
+import com.sunic.user.spec.common.rdo.BaseResponse;
 import com.sunic.user.rest.rest.userworkspace.docs.UserWorkspaceResourceDocs;
 import com.sunic.user.spec.facade.userworkspace.UserWorkspaceFacade;
 import com.sunic.user.spec.facade.userworkspace.rdo.UserWorkspaceRdo;

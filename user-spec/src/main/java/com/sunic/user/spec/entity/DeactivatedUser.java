@@ -21,4 +21,18 @@ public class DeactivatedUser {
     private Integer gender;
     private List<UserWorkspace> userWorkspaces;
     private Integer loginFailCount;
+
+    public static DeactivatedUser fromUser(User user) {
+        return DeactivatedUser.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .password(user.getPassword())
+                .phone(user.getPhone())
+                .birthYear(user.getBirthYear())
+                .gender(user.getGender())
+                .userWorkspaces(user.getUserWorkspaces())
+                .loginFailCount(user.getLoginFailCount())
+                .build();
+    }
 }

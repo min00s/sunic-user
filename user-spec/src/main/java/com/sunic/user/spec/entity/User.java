@@ -56,4 +56,49 @@ public class User {
                 .lastLoginFailTime(this.lastLoginFailTime)
                 .build();
     }
+
+    public static User create(String email, String name, String password, String phone, 
+                             String birthYear, Integer gender) {
+        return User.builder()
+                .email(email)
+                .name(name)
+                .password(password)
+                .phone(phone)
+                .birthYear(birthYear)
+                .gender(gender)
+                .loginFailCount(0)
+                .build();
+    }
+
+    public User modify(String name, String phone, String birthYear, Integer gender) {
+        return User.builder()
+                .id(this.id)
+                .email(this.email)
+                .name(name)
+                .password(this.password)
+                .phone(phone)
+                .birthYear(birthYear)
+                .gender(gender)
+                .userWorkspaces(this.userWorkspaces)
+                .loginFailCount(this.loginFailCount)
+                .lastLoginTime(this.lastLoginTime)
+                .lastLoginFailTime(this.lastLoginFailTime)
+                .build();
+    }
+
+    public User changePassword(String newPassword) {
+        return User.builder()
+                .id(this.id)
+                .email(this.email)
+                .name(this.name)
+                .password(newPassword)
+                .phone(this.phone)
+                .birthYear(this.birthYear)
+                .gender(this.gender)
+                .userWorkspaces(this.userWorkspaces)
+                .loginFailCount(this.loginFailCount)
+                .lastLoginTime(this.lastLoginTime)
+                .lastLoginFailTime(this.lastLoginFailTime)
+                .build();
+    }
 }

@@ -25,31 +25,46 @@ This is a Java Spring Boot microservice called `user-service` that manages user 
 
 ### Module Structure
 ```
-user-spec/     - Domain entities, exceptions, facades (interfaces)
-user-aggregate/- Business logic implementations 
-user-rest/     - REST controllers and configuration
+user-spec/     - Domain entities, exceptions, facades (interfaces) - Minimal dependencies
+user-aggregate/- Business logic implementations, stores, JPO entities
+user-rest/     - REST controllers and configuration, global exception handling
 user-boot/     - Spring Boot application entry point
 ```
+
+### Module Dependencies
+- **user-spec**: Only essential annotations (Spring Context, Jakarta Validation, Jackson, OpenAPI)
+- **user-aggregate**: Depends on user-spec + Spring Data JPA + Spring Security crypto
+- **user-rest**: Depends on user-spec + user-aggregate + Spring Web + Spring Security  
+- **user-boot**: Depends on user-rest (transitively includes full stack) + Redis + dev tools
 
 ### Key Patterns
 - **Hexagonal Architecture**: Clear separation between domain (spec), application logic (aggregate), and adapters (rest)
 - **Immutable Domain Entities**: All entities use builder pattern and return new instances for modifications
 - **Entity-JPO Dual Model**: Domain entities (`User`) separate from JPA entities (`UserJpo`) with explicit conversion
 - **Store Pattern**: Store classes (`UserStore`, `UserWorkspaceStore`) abstract data access with clear entity boundaries
-- **SDO/RDO Pattern**: Service Data Objects for input, Response Data Objects for output
-- **Facade Pattern**: Separate facades for different business capabilities
+- **CDO/UDO/RDO Pattern**: Command Data Objects for creation, Update Data Objects for modification, Response Data Objects for output
+- **Facade Pattern**: REST controllers implement Swagger-documented facade interfaces with proper HTTP status mapping
+- **Global Exception Handling**: Centralized exception handling with domain-specific HTTP status codes
 
 ### Core Components
-- **UserLogic** (`user-aggregate/src/main/java/com/sunic/user/aggregate/user/logic/UserLogic.java`): Coordinates user operations by delegating to specialized services
-- **UserWorkspaceLogic** (`user-aggregate/src/main/java/com/sunic/user/aggregate/userworkspace/logic/UserWorkspaceLogic.java`): Manages workspace operations
-- **UserStore** (`user-aggregate/src/main/java/com/sunic/user/aggregate/user/store/UserStore.java`): Data access for User entities only
-- **UserWorkspaceStore** (`user-aggregate/src/main/java/com/sunic/user/aggregate/userworkspace/store/UserWorkspaceStore.java`): Data access for UserWorkspace entities only
+- **UserLogic** (`user-aggregate/src/main/java/com/sunic/user/aggregate/user/logic/UserLogic.java`): Implements user operations using entity factory methods and business logic
+- **UserWorkspaceLogic** (`user-aggregate/src/main/java/com/sunic/user/aggregate/userworkspace/logic/UserWorkspaceLogic.java`): Manages workspace operations using entity creation and state management methods
+- **UserStore** (`user-aggregate/src/main/java/com/sunic/user/aggregate/user/store/UserStore.java`): Data access for User entities with JPO conversion
+- **UserWorkspaceStore** (`user-aggregate/src/main/java/com/sunic/user/aggregate/userworkspace/store/UserWorkspaceStore.java`): Data access for UserWorkspace entities with JPO conversion
+- **GlobalExceptionHandler** (`user-rest/src/main/java/com/sunic/user/rest/config/GlobalExceptionHandler.java`): Centralized exception handling with proper HTTP status mapping
 
 ### Domain Entity Logic
 Entities in the `user-spec` module contain their own creation and modification logic:
 - **User**: `create()`, `modify()`, `changePassword()`, `updateLoginFailCount()`, `resetLoginFailCount()`
-- **UserWorkspace**: `create()`, `modify()`, `changeState()`
+- **UserWorkspace**: `create()`, `modify()`, `changeState()`, `toRdo()` conversion method
 - **DeactivatedUser**: `fromUser()` factory method
+
+### Data Transfer Object Structure
+- **CDO (Command Data Objects)**: Used for entity creation operations (e.g., `UserWorkspaceCdo`)
+- **UDO (Update Data Objects)**: Used for entity modification operations (e.g., `UserWorkspaceUdo`)  
+- **SDO (Service Data Objects)**: Used for service layer operations (e.g., `UserRegisterSdo`, `UserLoginSdo`)
+- **RDO (Response Data Objects)**: Used for API responses (e.g., `UserLoginRdo`, `UserWorkspaceRdo`)
+- **BaseResponse/ErrorResponse**: Standardized response wrapper with success flag and data
 
 ### Technology Stack
 - Java 17
@@ -62,6 +77,23 @@ Entities in the `user-spec` module contain their own creation and modification l
 ## Configuration Profiles
 - `local`: Development profile with hardcoded MySQL credentials and SQL logging enabled
 - `prod`: Production profile using environment variables with optimized JPA settings
+
+## Important Architecture Notes
+
+### Entity Organization
+- **Domain entities** are located in `user-spec/src/main/java/com/sunic/user/spec/facade/*/entity/`
+- **JPA entities (JPO)** are located in `user-aggregate/src/main/java/com/sunic/user/aggregate/*/store/jpo/`
+- **Data Transfer Objects** are located in `user-spec/src/main/java/com/sunic/user/spec/facade/*/vo/`
+
+### Logic Layer Implementation
+- Logic classes do NOT implement facade interfaces directly (facades are for REST layer only)
+- Logic classes provide business methods that are called by REST controllers
+- REST controllers implement facade interfaces and delegate to logic classes
+
+### Store Pattern Implementation
+- Each aggregate has its own store class with clear entity boundaries
+- Store classes handle conversion between domain entities and JPO entities
+- Repositories are injected into stores, not directly into logic classes
 
 ## Security Notes
 - JWT secret is configured in `application.yml` (consider moving to environment variables for production)

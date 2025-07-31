@@ -29,26 +29,27 @@ user-spec/     - Domain entities, exceptions, facades (interfaces)
 user-aggregate/- Business logic implementations 
 user-rest/     - REST controllers and configuration
 user-boot/     - Spring Boot application entry point
-user-client/   - (Referenced but not present in current structure)
 ```
 
 ### Key Patterns
 - **Hexagonal Architecture**: Clear separation between domain (spec), application logic (aggregate), and adapters (rest)
-- **Single Responsibility Principle**: Each service class has a single, well-defined responsibility
-- **Facade Pattern**: Separate facades for authentication (`UserAuthenticationFacade`) and management (`UserManagementFacade`)
-- **Service Layer Pattern**: Specialized services for authentication, registration, deactivation, and workspace membership
+- **Immutable Domain Entities**: All entities use builder pattern and return new instances for modifications
+- **Entity-JPO Dual Model**: Domain entities (`User`) separate from JPA entities (`UserJpo`) with explicit conversion
+- **Store Pattern**: Store classes (`UserStore`, `UserWorkspaceStore`) abstract data access with clear entity boundaries
 - **SDO/RDO Pattern**: Service Data Objects for input, Response Data Objects for output
-- **JPA Repository Pattern**: Store classes abstract database operations with clear entity boundaries
+- **Facade Pattern**: Separate facades for different business capabilities
 
 ### Core Components
 - **UserLogic** (`user-aggregate/src/main/java/com/sunic/user/aggregate/user/logic/UserLogic.java`): Coordinates user operations by delegating to specialized services
-- **UserAuthenticationService**: Handles user authentication and login security
-- **UserRegistrationService**: Manages user registration process  
-- **UserDeactivationService**: Handles deactivation of inactive users
-- **UserWorkspaceMembershipService**: Manages user-workspace relationships
-- **UserResource** (`user-rest/src/main/java/com/sunic/user/rest/rest/user/UserResource.java`): REST API endpoints
+- **UserWorkspaceLogic** (`user-aggregate/src/main/java/com/sunic/user/aggregate/userworkspace/logic/UserWorkspaceLogic.java`): Manages workspace operations
 - **UserStore** (`user-aggregate/src/main/java/com/sunic/user/aggregate/user/store/UserStore.java`): Data access for User entities only
 - **UserWorkspaceStore** (`user-aggregate/src/main/java/com/sunic/user/aggregate/userworkspace/store/UserWorkspaceStore.java`): Data access for UserWorkspace entities only
+
+### Domain Entity Logic
+Entities in the `user-spec` module contain their own creation and modification logic:
+- **User**: `create()`, `modify()`, `changePassword()`, `updateLoginFailCount()`, `resetLoginFailCount()`
+- **UserWorkspace**: `create()`, `modify()`, `changeState()`
+- **DeactivatedUser**: `fromUser()` factory method
 
 ### Technology Stack
 - Java 17
@@ -64,5 +65,5 @@ user-client/   - (Referenced but not present in current structure)
 
 ## Security Notes
 - JWT secret is configured in `application.yml` (consider moving to environment variables for production)
-- Password encoding handled by Spring Security's PasswordEncoder
+- Password encoding handled by Spring Security's PasswordEncoder  
 - Login failure tracking implemented with automatic user lockout logic

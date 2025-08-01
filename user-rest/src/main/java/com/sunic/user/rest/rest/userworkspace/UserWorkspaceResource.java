@@ -5,6 +5,7 @@ import com.sunic.user.spec.userworkspace.facade.UserWorkspaceFacade;
 import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceCdo;
 import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceRdo;
 import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceUdo;
+import com.sunic.user.spec.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,29 +20,29 @@ public class UserWorkspaceResource implements UserWorkspaceFacade {
 
     @Override
     @PostMapping("/")
-    public ResponseEntity<com.sunic.user.spec.common.ApiResponse> registerUserWorkspace(@RequestBody UserWorkspaceCdo userWorkspaceRegisterSdo) {
-        Integer workspaceId = userWorkspaceLogic.registerUserWorkspace(userWorkspaceRegisterSdo);
-        return new ResponseEntity<>(com.sunic.user.spec.common.ApiResponse.from(true, "Success", workspaceId), HttpStatus.OK);
+    public ResponseEntity<ApiResponse> registerUserWorkspace(@RequestBody UserWorkspaceCdo userWorkspaceRegisterSdo) {
+        userWorkspaceLogic.registerUserWorkspace(userWorkspaceRegisterSdo);
+        return new ResponseEntity<>(ApiResponse.from(true, "Success"), HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<com.sunic.user.spec.common.ApiResponse> retrieveUserWorkspace(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse> retrieveUserWorkspace(@PathVariable Integer id) {
         UserWorkspaceRdo workspace = userWorkspaceLogic.retrieveUserWorkspace(id);
-        return new ResponseEntity<>(com.sunic.user.spec.common.ApiResponse.from(true, "Success", workspace), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.from(true, "Success", workspace), HttpStatus.OK);
     }
 
     @Override
     @PutMapping("/")
-    public ResponseEntity<com.sunic.user.spec.common.ApiResponse> modifyUserWorkspace(@RequestBody UserWorkspaceUdo userWorkspaceModifySdo) {
+    public ResponseEntity<ApiResponse> modifyUserWorkspace(@RequestBody UserWorkspaceUdo userWorkspaceModifySdo) {
         String result = userWorkspaceLogic.modifyUserWorkspace(userWorkspaceModifySdo);
-        return new ResponseEntity<>(com.sunic.user.spec.common.ApiResponse.from(true, "Success", result), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.from(true, "Success", result), HttpStatus.OK);
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<com.sunic.user.spec.common.ApiResponse> deleteUserWorkspace(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse> deleteUserWorkspace(@PathVariable Integer id) {
         userWorkspaceLogic.deleteUserWorkspace(id);
-        return new ResponseEntity<>(com.sunic.user.spec.common.ApiResponse.from(true, "Success"), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.from(true, "Success"), HttpStatus.OK);
     }
 }

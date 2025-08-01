@@ -1,5 +1,7 @@
 package com.sunic.user.spec.user.entity;
 
+import com.sunic.user.spec.user.facade.sdo.UserLoginRdo;
+import com.sunic.user.spec.user.facade.sdo.UserRegisterSdo;
 import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -26,47 +29,24 @@ public class User {
     private LocalDateTime lastLoginTime;
     private LocalDateTime lastLoginFailTime;
 
-    public User updateLoginFailCount() {
-        return User.builder()
-                .id(this.id)
-                .email(this.email)
-                .name(this.name)
-                .password(this.password)
-                .phone(this.phone)
-                .birthYear(this.birthYear)
-                .gender(this.gender)
-                .userWorkspaces(this.userWorkspaces)
-                .loginFailCount(this.loginFailCount + 1)
-                .lastLoginTime(this.lastLoginTime)
-                .lastLoginFailTime(LocalDateTime.now())
-                .build();
+    public void updateLoginFailCount() {
+        this.loginFailCount++;
+        this.lastLoginFailTime = LocalDateTime.now();
     }
 
-    public User resetLoginFailCount() {
-        return User.builder()
-                .id(this.id)
-                .email(this.email)
-                .name(this.name)
-                .password(this.password)
-                .phone(this.phone)
-                .birthYear(this.birthYear)
-                .gender(this.gender)
-                .userWorkspaces(this.userWorkspaces)
-                .loginFailCount(0)
-                .lastLoginTime(LocalDateTime.now())
-                .lastLoginFailTime(this.lastLoginFailTime)
-                .build();
+    public void resetLoginFailCount() {
+        this.loginFailCount = 0;
+        this.lastLoginTime = LocalDateTime.now();
     }
 
-    public static User create(String email, String name, String password, String phone,
-                              String birthYear, Integer gender) {
+    public static User create(UserRegisterSdo userRegisterSdo, String password) {
         return User.builder()
-                .email(email)
-                .name(name)
+                .email(userRegisterSdo.getEmail())
+                .name(userRegisterSdo.getName())
                 .password(password)
-                .phone(phone)
-                .birthYear(birthYear)
-                .gender(gender)
+                .phone(userRegisterSdo.getPhone())
+                .birthYear(userRegisterSdo.getBirthYear())
+                .gender(userRegisterSdo.getGender())
                 .loginFailCount(0)
                 .build();
     }
@@ -100,6 +80,17 @@ public class User {
                 .loginFailCount(this.loginFailCount)
                 .lastLoginTime(this.lastLoginTime)
                 .lastLoginFailTime(this.lastLoginFailTime)
+                .build();
+    }
+
+    public UserLoginRdo toLoginRdo() {
+        return UserLoginRdo.builder()
+                .id(this.id)
+                .email(this.email)
+                .name(this.name)
+                .phone(this.phone)
+                .gender(this.gender)
+                .userWorkspaces(this.userWorkspaces.stream().map(UserWorkspace::toRdo).collect(Collectors.toList()))
                 .build();
     }
 }

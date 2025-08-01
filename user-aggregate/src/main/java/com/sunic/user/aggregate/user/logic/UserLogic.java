@@ -13,7 +13,6 @@ import com.sunic.user.spec.user.facade.sdo.UserRegisterSdo;
 import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
 import com.sunic.user.spec.userworkspace.exception.UserWorkspaceAlreadyExistsException;
 import com.sunic.user.spec.userworkspace.exception.WorkspaceNotFoundException;
-import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceRdo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -36,13 +34,7 @@ public class UserLogic {
             throw new UserAlreadyExistsException("User with email already exists: " + userRegisterSdo.getEmail());
         }
 
-        User user = User.create(
-                userRegisterSdo.getEmail(),
-                userRegisterSdo.getName(),
-                passwordEncoder.encode(userRegisterSdo.getPassword()),
-                userRegisterSdo.getPhone(),
-                userRegisterSdo.getBirthYear(),
-                userRegisterSdo.getGender());
+        User user = User.create(userRegisterSdo, passwordEncoder.encode(userRegisterSdo.getPassword()));
 
         userStore.save(user);
     }
@@ -52,22 +44,15 @@ public class UserLogic {
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
 
         if (!passwordEncoder.matches(userLoginSdo.getPassword(), user.getPassword())) {
-            User updatedUser = user.updateLoginFailCount();
-            userStore.save(updatedUser);
+            user.updateLoginFailCount();
+            userStore.save(user);
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        User updatedUser = user.resetLoginFailCount();
-        userStore.save(updatedUser);
+        user.resetLoginFailCount();
+        userStore.save(user);
 
-        return UserLoginRdo.builder()
-                .id(updatedUser.getId())
-                .email(updatedUser.getEmail())
-                .name(updatedUser.getName())
-                .phone(updatedUser.getPhone())
-                .gender(updatedUser.getGender())
-                .userWorkspaces(convertToWorkspaceRdos(updatedUser.getUserWorkspaces()))
-                .build();
+        return user.toLoginRdo();
     }
 
     @Transactional
@@ -96,14 +81,5 @@ public class UserLogic {
         }
 
         userStore.save(user);
-    }
-
-    private List<UserWorkspaceRdo> convertToWorkspaceRdos(List<UserWorkspace> userWorkspaces) {
-        if (userWorkspaces == null) {
-            return List.of();
-        }
-        return userWorkspaces.stream()
-                .map(UserWorkspace::toRdo)
-                .collect(Collectors.toList());
     }
 }

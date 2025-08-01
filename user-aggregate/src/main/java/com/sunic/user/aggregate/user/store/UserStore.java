@@ -28,9 +28,8 @@ public class UserStore {
         return userRepository.existsByEmail(email);
     }
 
-    public User save(User user) {
-        UserJpo savedJpo = userRepository.save(UserJpo.from(user));
-        return savedJpo.toEntity();
+    public void save(User user) {
+        userRepository.save(UserJpo.from(user));
     }
 
     public Optional<User> findByEmail(String email) {

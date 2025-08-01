@@ -17,9 +17,8 @@ public class UserWorkspaceStore {
         return userWorkspaceRepository.existsByName(name);
     }
 
-    public UserWorkspace save(UserWorkspace workspace) {
-        UserWorkspaceJpo savedJpo = userWorkspaceRepository.save(UserWorkspaceJpo.from(workspace));
-        return savedJpo.toEntity();
+    public void save(UserWorkspace workspace) {
+        userWorkspaceRepository.save(UserWorkspaceJpo.from(workspace));
     }
 
     public Optional<UserWorkspace> findById(Integer id) {

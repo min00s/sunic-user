@@ -1,6 +1,8 @@
 package com.sunic.user.spec.userworkspace.entity;
 
+import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceCdo;
 import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceRdo;
+import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceUdo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,47 +24,29 @@ public class UserWorkspace {
     private Long modifiedTime;
     private Integer modifier;
 
-    public static UserWorkspace create(String name, String description, UserWorkspaceType type,
-                                       Integer registrant) {
+    public static UserWorkspace create(UserWorkspaceCdo userWorkspaceCdo) {
         long currentTime = System.currentTimeMillis();
         return UserWorkspace.builder()
-                .name(name)
-                .description(description)
-                .type(type)
+                .name(userWorkspaceCdo.getName())
+                .description(userWorkspaceCdo.getDescription())
+                .type(userWorkspaceCdo.getType())
                 .state(UserWorkspaceState.Active)
                 .registeredTime(currentTime)
-                .registrant(registrant)
+                .registrant(userWorkspaceCdo.getRegistrant())
                 .modifiedTime(currentTime)
-                .modifier(registrant)
+                .modifier(userWorkspaceCdo.getRegistrant())
                 .build();
     }
 
-    public UserWorkspace modify(String name, String description, Integer modifier) {
-        return UserWorkspace.builder()
-                .id(this.id)
-                .name(name)
-                .description(description)
-                .type(this.type)
-                .state(this.state)
-                .registeredTime(this.registeredTime)
-                .registrant(this.registrant)
-                .modifiedTime(System.currentTimeMillis())
-                .modifier(modifier)
-                .build();
+    public void modify(UserWorkspaceUdo userWorkspaceUdo) {
+        BeanUtils.copyProperties(userWorkspaceUdo, this);
+        this.modifiedTime = System.currentTimeMillis();
     }
 
-    public UserWorkspace changeState(UserWorkspaceState newState, Integer modifier) {
-        return UserWorkspace.builder()
-                .id(this.id)
-                .name(this.name)
-                .description(this.description)
-                .type(this.type)
-                .state(newState)
-                .registeredTime(this.registeredTime)
-                .registrant(this.registrant)
-                .modifiedTime(System.currentTimeMillis())
-                .modifier(modifier)
-                .build();
+    public void deleteState(Integer modifier) {
+        this.state = UserWorkspaceState.Removed;
+        this.modifiedTime = System.currentTimeMillis();
+        this.modifier = modifier;
     }
 
     public UserWorkspaceRdo toRdo() {

@@ -1,6 +1,6 @@
 package com.sunic.user.aggregate.user.store.jpo;
 
-import com.sunic.user.spec.facade.user.entity.User;
+import com.sunic.user.spec.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

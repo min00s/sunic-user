@@ -1,13 +1,13 @@
 package com.sunic.user.aggregate.userworkspace.logic;
 
 import com.sunic.user.aggregate.userworkspace.store.UserWorkspaceStore;
-import com.sunic.user.spec.exception.WorkspaceAlreadyExistsException;
-import com.sunic.user.spec.exception.WorkspaceNotFoundException;
-import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
-import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceState;
-import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceCdo;
-import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceRdo;
-import com.sunic.user.spec.facade.userworkspace.vo.UserWorkspaceUdo;
+import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
+import com.sunic.user.spec.userworkspace.entity.UserWorkspaceState;
+import com.sunic.user.spec.userworkspace.exception.WorkspaceAlreadyExistsException;
+import com.sunic.user.spec.userworkspace.exception.WorkspaceNotFoundException;
+import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceCdo;
+import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceRdo;
+import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceUdo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +59,7 @@ public class UserWorkspaceLogic {
         String newName = userWorkspaceModifySdo.getName() != null ? userWorkspaceModifySdo.getName() : workspace.getName();
         String newDescription = userWorkspaceModifySdo.getDescription() != null ? userWorkspaceModifySdo.getDescription() : workspace.getDescription();
         Integer modifier = userWorkspaceModifySdo.getModifier() != null ? userWorkspaceModifySdo.getModifier() : workspace.getModifier();
-        
+
         UserWorkspace updatedWorkspace;
         if (userWorkspaceModifySdo.getState() != null && !userWorkspaceModifySdo.getState().equals(workspace.getState())) {
             updatedWorkspace = workspace.changeState(userWorkspaceModifySdo.getState(), modifier);

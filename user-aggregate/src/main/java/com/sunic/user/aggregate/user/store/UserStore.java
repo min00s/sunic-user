@@ -6,9 +6,9 @@ import com.sunic.user.aggregate.user.store.jpo.UserWorkspaceJpo;
 import com.sunic.user.aggregate.user.store.repository.DeactivatedUserRepository;
 import com.sunic.user.aggregate.user.store.repository.UserRepository;
 import com.sunic.user.aggregate.user.store.repository.UserWorkspaceRepository;
-import com.sunic.user.spec.facade.user.entity.DeactivatedUser;
-import com.sunic.user.spec.facade.user.entity.User;
-import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
+import com.sunic.user.spec.user.entity.DeactivatedUser;
+import com.sunic.user.spec.user.entity.User;
+import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -11,8 +11,9 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserJpo, Integer> {
     boolean existsByEmail(String email);
+
     Optional<UserJpo> findByEmail(String email);
-    
+
     @Query("SELECT u FROM UserJpo u WHERE u.lastLoginTime < :oneYearAgo OR u.lastLoginTime IS NULL")
     List<UserJpo> findUsersInactiveForMoreThanOneYear(@Param("oneYearAgo") LocalDateTime oneYearAgo);
 }

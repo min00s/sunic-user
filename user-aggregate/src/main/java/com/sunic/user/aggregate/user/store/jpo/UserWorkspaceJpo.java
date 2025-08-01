@@ -1,8 +1,8 @@
 package com.sunic.user.aggregate.user.store.jpo;
 
-import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspace;
-import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceState;
-import com.sunic.user.spec.facade.userworkspace.entity.UserWorkspaceType;
+import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
+import com.sunic.user.spec.userworkspace.entity.UserWorkspaceState;
+import com.sunic.user.spec.userworkspace.entity.UserWorkspaceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface UserWorkspaceRepository extends JpaRepository<UserWorkspaceJpo, Integer> {
     boolean existsByName(String name);
+
     Optional<UserWorkspaceJpo> findByName(String name);
 }

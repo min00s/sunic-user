@@ -11,14 +11,14 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-            .components(new Components())
-            .info(apiInfo());
+                .components(new Components())
+                .info(apiInfo());
     }
 
     private Info apiInfo() {
         return new Info()
-            .title("SuniC API Test")
-            .description("SuniC API description")
-            .version("1.0.0");
+                .title("SuniC API Test")
+                .description("SuniC API description")
+                .version("1.0.0");
     }
 }

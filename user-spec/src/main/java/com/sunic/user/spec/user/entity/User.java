@@ -24,6 +24,7 @@ public class User {
     private String phone;
     private String birthYear;
     private Integer gender;
+    private Role role;
     private List<UserWorkspace> userWorkspaces;
     private Integer loginFailCount;
     private LocalDateTime lastLoginTime;
@@ -47,6 +48,7 @@ public class User {
                 .phone(userRegisterSdo.getPhone())
                 .birthYear(userRegisterSdo.getBirthYear())
                 .gender(userRegisterSdo.getGender())
+                .role(userRegisterSdo.getRole() != null ? userRegisterSdo.getRole() : Role.USER)
                 .loginFailCount(0)
                 .build();
     }
@@ -60,6 +62,7 @@ public class User {
                 .phone(phone)
                 .birthYear(birthYear)
                 .gender(gender)
+                .role(this.role)
                 .userWorkspaces(this.userWorkspaces)
                 .loginFailCount(this.loginFailCount)
                 .lastLoginTime(this.lastLoginTime)
@@ -76,6 +79,7 @@ public class User {
                 .phone(this.phone)
                 .birthYear(this.birthYear)
                 .gender(this.gender)
+                .role(this.role)
                 .userWorkspaces(this.userWorkspaces)
                 .loginFailCount(this.loginFailCount)
                 .lastLoginTime(this.lastLoginTime)
@@ -90,7 +94,12 @@ public class User {
                 .name(this.name)
                 .phone(this.phone)
                 .gender(this.gender)
+                .role(this.role)
                 .userWorkspaces(this.userWorkspaces.stream().map(UserWorkspace::toRdo).collect(Collectors.toList()))
                 .build();
+    }
+
+    public boolean isAdmin() {
+        return this.role == Role.ADMIN;
     }
 }

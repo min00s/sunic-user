@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @NoArgsConstructor
-public class ApiResponse {
+public class CommonResponse {
     private boolean success;
     private String message;
     private Object data;
 
-    public static ApiResponse from(boolean success, String message) {
+    public static CommonResponse from(boolean success, String message) {
         return builder().success(success).message(message).build();
     }
 
-    public static ApiResponse from(boolean success, String message, Object data) {
+    public static CommonResponse from(boolean success, String message, Object data) {
         return builder().success(success).message(message).data(data).build();
     }
 }

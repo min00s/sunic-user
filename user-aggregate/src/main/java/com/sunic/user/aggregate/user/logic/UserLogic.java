@@ -82,4 +82,14 @@ public class UserLogic {
 
         userStore.save(user);
     }
+
+    public boolean checkUser(int userId) {
+        return userStore.findById(userId).isPresent();
+    }
+
+    public boolean checkAdminUser(int userId) {
+        return userStore.findById(userId)
+                .map(User::isAdmin)
+                .orElse(false);
+    }
 }

@@ -1,5 +1,6 @@
 package com.sunic.user.spec.user.facade;
 
+import com.sunic.user.spec.common.CommonResponse;
 import com.sunic.user.spec.user.facade.sdo.UserJoinSdo;
 import com.sunic.user.spec.user.facade.sdo.UserLoginSdo;
 import com.sunic.user.spec.user.facade.sdo.UserRegisterSdo;
@@ -14,17 +15,17 @@ public interface UserFacade {
 
     @Operation(summary = "register", description = "register API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Success")})
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> registerUser(UserRegisterSdo userRegisterSdo);
+    ResponseEntity<CommonResponse> registerUser(UserRegisterSdo userRegisterSdo);
 
     @Operation(summary = "login", description = "login API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Success")})
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> loginUser(UserLoginSdo userLoginSdo);
+    ResponseEntity<CommonResponse> loginUser(UserLoginSdo userLoginSdo);
 
     @Operation(summary = "deactivate", description = "deactivate API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Success")})
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> deactivateUser();
+    ResponseEntity<CommonResponse> deactivateUser();
 
     @Operation(summary = "join workspace", description = "join workspace API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Success")})
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> joinWorkspace(UserJoinSdo userJoinSdo);
+    ResponseEntity<CommonResponse> joinWorkspace(UserJoinSdo userJoinSdo);
 }

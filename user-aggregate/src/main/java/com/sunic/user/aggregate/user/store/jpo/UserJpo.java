@@ -1,5 +1,6 @@
 package com.sunic.user.aggregate.user.store.jpo;
 
+import com.sunic.user.spec.user.entity.Role;
 import com.sunic.user.spec.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,11 @@ public class UserJpo {
 
     private Integer gender;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @ColumnDefault("'USER'")
+    private Role role;
+
     @Builder.Default
     @ManyToMany
     @JoinTable(name = "user_role")
@@ -68,6 +74,7 @@ public class UserJpo {
                 .phone(user.getPhone())
                 .birthYear(user.getBirthYear())
                 .gender(user.getGender())
+                .role(user.getRole())
                 .loginFailCount(user.getLoginFailCount())
                 .lastLoginTime(user.getLastLoginTime())
                 .lastLoginFailTime(user.getLastLoginFailTime())
@@ -83,6 +90,7 @@ public class UserJpo {
                 .phone(this.phone)
                 .birthYear(this.birthYear)
                 .gender(this.gender)
+                .role(this.role)
                 .loginFailCount(this.loginFailCount)
                 .lastLoginTime(this.lastLoginTime)
                 .lastLoginFailTime(this.lastLoginFailTime)

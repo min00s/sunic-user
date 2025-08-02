@@ -1,5 +1,6 @@
 package com.sunic.user.spec.user.facade.sdo;
 
+import com.sunic.user.spec.user.entity.Role;
 import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceRdo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +19,6 @@ public class UserLoginRdo {
     private String name;
     private String phone;
     private Integer gender;
+    private Role role;
     private List<UserWorkspaceRdo> userWorkspaces;
 }

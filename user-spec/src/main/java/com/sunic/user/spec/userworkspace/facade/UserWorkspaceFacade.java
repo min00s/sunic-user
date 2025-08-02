@@ -1,5 +1,6 @@
 package com.sunic.user.spec.userworkspace.facade;
 
+import com.sunic.user.spec.common.CommonResponse;
 import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceCdo;
 import com.sunic.user.spec.userworkspace.facade.sdo.UserWorkspaceUdo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "UserWorkspace API", description = "workspace CRUD etc")
 public interface UserWorkspaceFacade {
     @Operation(summary = "register", description = "register API")
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> registerUserWorkspace(UserWorkspaceCdo userWorkspaceRegisterSdo);
+    ResponseEntity<CommonResponse> registerUserWorkspace(UserWorkspaceCdo userWorkspaceRegisterSdo);
 
     @Operation(summary = "retrieve", description = "retrieve API")
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> retrieveUserWorkspace(Integer id);
+    ResponseEntity<CommonResponse> retrieveUserWorkspace(Integer id);
 
     @Operation(summary = "modify", description = "modify API")
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> modifyUserWorkspace(UserWorkspaceUdo userWorkspaceModifySdo);
+    ResponseEntity<CommonResponse> modifyUserWorkspace(UserWorkspaceUdo userWorkspaceModifySdo);
 
     @Operation(summary = "delete", description = "delete API")
-    ResponseEntity<com.sunic.user.spec.common.ApiResponse> deleteUserWorkspace(Integer id);
+    ResponseEntity<CommonResponse> deleteUserWorkspace(Integer id);
 }

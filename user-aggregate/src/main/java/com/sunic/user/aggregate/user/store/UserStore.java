@@ -8,6 +8,7 @@ import com.sunic.user.aggregate.user.store.repository.UserRepository;
 import com.sunic.user.aggregate.user.store.repository.UserWorkspaceRepository;
 import com.sunic.user.spec.user.entity.DeactivatedUser;
 import com.sunic.user.spec.user.entity.User;
+import com.sunic.user.spec.user.exception.UserNotFoundException;
 import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -49,12 +50,22 @@ public class UserStore {
                 .collect(Collectors.toList());
     }
 
+    public DeactivatedUser findDeactivatedUserByEmail(String email) {
+        return deactivatedUserRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("Invalid User Name"))
+            .toDeactivatedUser();
+    }
+
     public void saveDeactivatedUser(DeactivatedUser deactivatedUser) {
         deactivatedUserRepository.save(DeactivatedUserJpo.from(deactivatedUser));
     }
 
     public void deleteUser(User user) {
         userRepository.deleteById(user.getId());
+    }
+
+    public void deleteDeactivatedUser(DeactivatedUser deactivatedUser) {
+        deactivatedUserRepository.deleteById(deactivatedUser.getId());
     }
 
     public Optional<UserWorkspace> findWorkspaceById(Integer workspaceId) {

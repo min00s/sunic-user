@@ -53,6 +53,21 @@ public class User {
                 .build();
     }
 
+    public static User fromDeactivateUser(DeactivatedUser deactivatedUser) {
+        return User.builder()
+            .id(deactivatedUser.getId())
+            .email(deactivatedUser.getEmail())
+            .name(deactivatedUser.getName())
+            .password(deactivatedUser.getPassword())
+            .phone(deactivatedUser.getPhone())
+            .role(deactivatedUser.getRole())
+            .birthYear(deactivatedUser.getBirthYear())
+            .gender(deactivatedUser.getGender())
+            .loginFailCount(0)
+            .userWorkspaces(deactivatedUser.getUserWorkspaces())
+            .build();
+    }
+
     public User modify(String name, String phone, String birthYear, Integer gender) {
         return User.builder()
                 .id(this.id)

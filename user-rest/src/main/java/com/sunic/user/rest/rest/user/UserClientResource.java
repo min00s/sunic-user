@@ -14,21 +14,21 @@ import com.sunic.user.spec.user.facade.UserClientFacade;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/user/client")
+@RequestMapping("/userClient")
 @RequiredArgsConstructor
 public class UserClientResource implements UserClientFacade {
 
 	private final UserLogic userLogic;
 
 	@Override
-	@GetMapping("/check/{userId}")
-	public ResponseEntity<CommonResponse> checkUser(@PathVariable Integer userId) {
-		return new ResponseEntity<>(CommonResponse.from(true, "Success", userLogic.checkUser(userId)), HttpStatus.OK);
+	@GetMapping("/check/{id}")
+	public ResponseEntity<CommonResponse> checkUser(@PathVariable("id") int id) {
+		return new ResponseEntity<>(CommonResponse.from(true, "Success", userLogic.checkUser(id)), HttpStatus.OK);
 	}
 
 	@Override
-	@GetMapping("/checkAdmin/{userId}")
-	public ResponseEntity<CommonResponse> checkUserIsAdmin(@PathVariable Integer userId) {
-		return new ResponseEntity<>(CommonResponse.from(true, "Success", userLogic.checkAdminUser(userId)), HttpStatus.OK);
+	@GetMapping("/checkAdmin/{id}")
+	public ResponseEntity<CommonResponse> checkUserIsAdmin(@PathVariable("id") int id) {
+		return new ResponseEntity<>(CommonResponse.from(true, "Success", userLogic.checkAdminUser(id)), HttpStatus.OK);
 	}
 }

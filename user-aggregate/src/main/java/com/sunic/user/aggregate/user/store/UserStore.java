@@ -8,13 +8,19 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.sunic.user.aggregate.user.store.jpo.DeactivatedUserJpo;
+import com.sunic.user.aggregate.user.store.jpo.DeactivatedUserProfileJpo;
 import com.sunic.user.aggregate.user.store.jpo.UserJpo;
+import com.sunic.user.aggregate.user.store.jpo.UserProfileJpo;
 import com.sunic.user.aggregate.user.store.jpo.UserWorkspaceJpo;
+import com.sunic.user.aggregate.user.store.repository.DeactivatedUserProfileRepository;
 import com.sunic.user.aggregate.user.store.repository.DeactivatedUserRepository;
+import com.sunic.user.aggregate.user.store.repository.UserProfileRepository;
 import com.sunic.user.aggregate.user.store.repository.UserRepository;
 import com.sunic.user.aggregate.user.store.repository.UserWorkspaceRepository;
 import com.sunic.user.spec.user.entity.DeactivatedUser;
+import com.sunic.user.spec.user.entity.DeactivatedUserProfile;
 import com.sunic.user.spec.user.entity.User;
+import com.sunic.user.spec.user.entity.UserProfile;
 import com.sunic.user.spec.user.exception.UserNotFoundException;
 import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
 
@@ -26,6 +32,8 @@ public class UserStore {
 	private final UserRepository userRepository;
 	private final DeactivatedUserRepository deactivatedUserRepository;
 	private final UserWorkspaceRepository userWorkspaceRepository;
+	private final UserProfileRepository userProfileRepository;
+	private final DeactivatedUserProfileRepository deactivatedUserProfileRepository;
 
 	public boolean existsByEmail(String email) {
 		return userRepository.existsByEmail(email);
@@ -87,5 +95,31 @@ public class UserStore {
 	public Optional<UserWorkspace> findWorkspaceByName(String name) {
 		return userWorkspaceRepository.findByName(name)
 			.map(UserWorkspaceJpo::toEntity);
+	}
+
+	public void saveUserProfile(UserProfile userProfile) {
+		userProfileRepository.save(UserProfileJpo.from(userProfile));
+	}
+
+	public Optional<UserProfile> findUserProfileByUserId(Integer userId) {
+		return userProfileRepository.findByUserId(userId)
+			.map(UserProfileJpo::toEntity);
+	}
+
+	public boolean userProfileExistsByUserId(Integer userId) {
+		return userProfileRepository.existsByUserId(userId);
+	}
+
+	public void deleteUserProfileByUserId(Integer userId) {
+		userProfileRepository.deleteByUserId(userId);
+	}
+
+	public void saveDeactivatedUserProfile(DeactivatedUserProfile deactivatedUserProfile) {
+		deactivatedUserProfileRepository.save(DeactivatedUserProfileJpo.from(deactivatedUserProfile));
+	}
+
+	public Optional<DeactivatedUserProfile> findDeactivatedUserProfileByUserId(Integer userId) {
+		return deactivatedUserProfileRepository.findByUserId(userId)
+			.map(DeactivatedUserProfileJpo::toEntity);
 	}
 }

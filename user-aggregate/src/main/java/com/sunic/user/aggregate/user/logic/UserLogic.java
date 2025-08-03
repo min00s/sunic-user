@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sunic.user.aggregate.user.store.UserStore;
 import com.sunic.user.spec.user.entity.DeactivatedUser;
+import com.sunic.user.spec.user.entity.DeactivatedUserProfile;
 import com.sunic.user.spec.user.entity.DeactivationReason;
 import com.sunic.user.spec.user.entity.User;
+import com.sunic.user.spec.user.entity.UserProfile;
 import com.sunic.user.spec.user.exception.InvalidCredentialsException;
 import com.sunic.user.spec.user.exception.UserAlreadyExistsException;
 import com.sunic.user.spec.user.exception.UserNotFoundException;
@@ -40,8 +42,12 @@ public class UserLogic {
 		}
 
 		User user = User.create(userRegisterSdo, passwordEncoder.encode(userRegisterSdo.getPassword()));
-
 		userStore.save(user);
+
+		if (userRegisterSdo.getUserProfile() != null) {
+			UserProfile userProfile = UserProfile.create(user.getId(), userRegisterSdo.getUserProfile());
+			userStore.saveUserProfile(userProfile);
+		}
 	}
 
 	public UserLoginRdo loginUser(UserLoginSdo userLoginSdo) {
@@ -57,15 +63,41 @@ public class UserLogic {
 		user.resetLoginFailCount();
 		userStore.save(user);
 
-		return user.toLoginRdo();
+		UserProfile userProfile = userStore.findUserProfileByUserId(user.getId()).orElse(null);
+		User userWithProfile = user.withUserProfile(userProfile);
+
+		return userWithProfile.toLoginRdo();
 	}
 
+	@Transactional
 	public void activateUser(UserActivateSdo userActivateSdo) {
 		DeactivatedUser deactivatedUser = userStore.findDeactivatedUserByEmail(userActivateSdo.getEmail());
-		User user = User.fromDeactivateUser(deactivatedUser);
+
+		DeactivatedUserProfile deactivatedUserProfile = userStore.findDeactivatedUserProfileByUserId(
+			deactivatedUser.getId()).orElse(null);
+		UserProfile userProfile = null;
+		if (deactivatedUserProfile != null) {
+			userProfile = UserProfile.builder()
+				.id(deactivatedUserProfile.getId())
+				.userId(deactivatedUserProfile.getUserId())
+				.nickName(deactivatedUserProfile.getNickName())
+				.univName(deactivatedUserProfile.getUnivName())
+				.univYear(deactivatedUserProfile.getUnivYear())
+				.univSemester(deactivatedUserProfile.getUnivSemester())
+				.majorCategory(deactivatedUserProfile.getMajorCategory())
+				.majorName(deactivatedUserProfile.getMajorName())
+				.profileImgUrl(deactivatedUserProfile.getProfileImgUrl())
+				.build();
+		}
+
+		User user = User.fromDeactivateUser(deactivatedUser, userProfile);
 
 		userStore.deleteDeactivatedUser(deactivatedUser);
 		userStore.save(user);
+
+		if (userProfile != null) {
+			userStore.saveUserProfile(userProfile);
+		}
 	}
 
 	public void deactivateUserByAdmin(UserDeactivateByAdminSdo userDeactivateByAdminSdo) {
@@ -82,13 +114,22 @@ public class UserLogic {
 		deactivateUser(userId, DeactivationReason.UserExit);
 	}
 
+	@Transactional
 	private void deactivateUser(int userId, DeactivationReason deactivationReason) {
 		User user = userStore.findById(userId)
 			.orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
+		UserProfile userProfile = userStore.findUserProfileByUserId(userId).orElse(null);
+		
 		DeactivatedUser du = DeactivatedUser.fromUser(user, deactivationReason);
-
 		userStore.saveDeactivatedUser(du);
+
+		if (userProfile != null) {
+			DeactivatedUserProfile deactivatedUserProfile = DeactivatedUserProfile.fromUserProfile(userProfile);
+			userStore.saveDeactivatedUserProfile(deactivatedUserProfile);
+			userStore.deleteUserProfileByUserId(userId);
+		}
+		
 		userStore.deleteUser(user);
 	}
 
@@ -98,9 +139,17 @@ public class UserLogic {
 		List<User> inactiveUsers = userStore.findUsersInactiveForMoreThanOneYear(oneYearAgo);
 
 		for (User user : inactiveUsers) {
+			UserProfile userProfile = userStore.findUserProfileByUserId(user.getId()).orElse(null);
+			
 			DeactivatedUser deactivatedUser = DeactivatedUser.fromUser(user, DeactivationReason.Dormancy);
-
 			userStore.saveDeactivatedUser(deactivatedUser);
+
+			if (userProfile != null) {
+				DeactivatedUserProfile deactivatedUserProfile = DeactivatedUserProfile.fromUserProfile(userProfile);
+				userStore.saveDeactivatedUserProfile(deactivatedUserProfile);
+				userStore.deleteUserProfileByUserId(user.getId());
+			}
+			
 			userStore.deleteUser(user);
 		}
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.sunic.user.spec.user.facade.sdo.UserLoginRdo;
+import com.sunic.user.spec.user.facade.sdo.UserProfileRdo;
 import com.sunic.user.spec.user.facade.sdo.UserRegisterSdo;
 import com.sunic.user.spec.userworkspace.entity.UserWorkspace;
 
@@ -30,6 +31,7 @@ public class User {
 	private Integer loginFailCount;
 	private LocalDateTime lastLoginTime;
 	private LocalDateTime lastLoginFailTime;
+	private UserProfile userProfile;
 
 	public void updateLoginFailCount() {
 		this.loginFailCount++;
@@ -54,7 +56,7 @@ public class User {
 			.build();
 	}
 
-	public static User fromDeactivateUser(DeactivatedUser deactivatedUser) {
+	public static User fromDeactivateUser(DeactivatedUser deactivatedUser, UserProfile userProfile) {
 		return User.builder()
 			.id(deactivatedUser.getId())
 			.email(deactivatedUser.getEmail())
@@ -66,6 +68,7 @@ public class User {
 			.gender(deactivatedUser.getGender())
 			.loginFailCount(0)
 			.userWorkspaces(deactivatedUser.getUserWorkspaces())
+			.userProfile(userProfile)
 			.build();
 	}
 
@@ -83,6 +86,7 @@ public class User {
 			.loginFailCount(this.loginFailCount)
 			.lastLoginTime(this.lastLoginTime)
 			.lastLoginFailTime(this.lastLoginFailTime)
+			.userProfile(this.userProfile)
 			.build();
 	}
 
@@ -100,10 +104,23 @@ public class User {
 			.loginFailCount(this.loginFailCount)
 			.lastLoginTime(this.lastLoginTime)
 			.lastLoginFailTime(this.lastLoginFailTime)
+			.userProfile(this.userProfile)
 			.build();
 	}
 
 	public UserLoginRdo toLoginRdo() {
+		UserProfileRdo userProfileRdo = this.userProfile != null ?
+			UserProfileRdo.builder()
+				.id(this.userProfile.getId())
+				.nickName(this.userProfile.getNickName())
+				.univName(this.userProfile.getUnivName())
+				.univYear(this.userProfile.getUnivYear())
+				.univSemester(this.userProfile.getUnivSemester())
+				.majorCategory(this.userProfile.getMajorCategory())
+				.majorName(this.userProfile.getMajorName())
+				.profileImgUrl(this.userProfile.getProfileImgUrl())
+				.build() : null;
+		
 		return UserLoginRdo.builder()
 			.id(this.id)
 			.email(this.email)
@@ -112,6 +129,25 @@ public class User {
 			.gender(this.gender)
 			.role(this.role)
 			.userWorkspaces(this.userWorkspaces.stream().map(UserWorkspace::toRdo).collect(Collectors.toList()))
+			.userProfile(userProfileRdo)
+			.build();
+	}
+
+	public User withUserProfile(UserProfile userProfile) {
+		return User.builder()
+			.id(this.id)
+			.email(this.email)
+			.name(this.name)
+			.password(this.password)
+			.phone(this.phone)
+			.birthYear(this.birthYear)
+			.gender(this.gender)
+			.role(this.role)
+			.userWorkspaces(this.userWorkspaces)
+			.loginFailCount(this.loginFailCount)
+			.lastLoginTime(this.lastLoginTime)
+			.lastLoginFailTime(this.lastLoginFailTime)
+			.userProfile(userProfile)
 			.build();
 	}
 

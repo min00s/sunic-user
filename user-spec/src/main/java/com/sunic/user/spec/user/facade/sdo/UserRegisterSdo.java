@@ -19,4 +19,5 @@ public class UserRegisterSdo {
 	private String birthYear;
 	private Integer gender;
 	private Role role;
+	private UserProfileCdo userProfile;
 }

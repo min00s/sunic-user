@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.sunic.user.spec.common.CommonResponse;
 import com.sunic.user.spec.user.facade.sdo.UserActivateSdo;
+import com.sunic.user.spec.user.facade.sdo.UserAddRoleSdo;
 import com.sunic.user.spec.user.facade.sdo.UserDeactivateByAdminSdo;
 import com.sunic.user.spec.user.facade.sdo.UserJoinSdo;
 import com.sunic.user.spec.user.facade.sdo.UserLoginSdo;
@@ -44,4 +45,8 @@ public interface UserFacade {
 	@Operation(summary = "join workspace", description = "join workspace API")
 	@ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Success")})
 	ResponseEntity<CommonResponse> joinWorkspace(UserJoinSdo userJoinSdo);
+
+	@Operation(summary = "add role to user", description = "add role to user API")
+	@ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Success")})
+	ResponseEntity<CommonResponse> addRoleToUser(UserAddRoleSdo userAddRoleSdo);
 }

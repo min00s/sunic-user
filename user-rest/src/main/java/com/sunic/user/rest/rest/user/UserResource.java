@@ -12,6 +12,7 @@ import com.sunic.user.aggregate.user.logic.UserLogic;
 import com.sunic.user.spec.common.CommonResponse;
 import com.sunic.user.spec.user.facade.UserFacade;
 import com.sunic.user.spec.user.facade.sdo.UserActivateSdo;
+import com.sunic.user.spec.user.facade.sdo.UserAddRoleSdo;
 import com.sunic.user.spec.user.facade.sdo.UserDeactivateByAdminSdo;
 import com.sunic.user.spec.user.facade.sdo.UserJoinSdo;
 import com.sunic.user.spec.user.facade.sdo.UserLoginRdo;
@@ -74,6 +75,13 @@ public class UserResource implements UserFacade {
 	@PostMapping("/join")
 	public ResponseEntity<CommonResponse> joinWorkspace(@RequestBody UserJoinSdo userJoinSdo) {
 		userLogic.joinWorkspace(userJoinSdo);
+		return new ResponseEntity<>(CommonResponse.from(true, "Success"), HttpStatus.OK);
+	}
+
+	@Override
+	@PostMapping("/role/add")
+	public ResponseEntity<CommonResponse> addRoleToUser(@RequestBody UserAddRoleSdo userAddRoleSdo) {
+		userLogic.addRoleToUser(userAddRoleSdo);
 		return new ResponseEntity<>(CommonResponse.from(true, "Success"), HttpStatus.OK);
 	}
 }

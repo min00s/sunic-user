@@ -2,6 +2,7 @@ package com.sunic.user.aggregate.user.store.jpo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,8 +13,6 @@ import com.sunic.user.spec.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -51,10 +50,9 @@ public class UserJpo {
 
 	private Integer gender;
 
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@ColumnDefault("'USER'")
-	private Role role;
+	private String roles;
 
 	@Builder.Default
 	@ManyToMany
@@ -68,6 +66,10 @@ public class UserJpo {
 	private LocalDateTime lastLoginFailTime;
 
 	public static UserJpo from(User user) {
+		String rolesString = user.getRoles() != null && !user.getRoles().isEmpty()
+			? user.getRoles().stream().map(Role::name).collect(Collectors.joining(","))
+			: Role.USER.name();
+		
 		return UserJpo.builder()
 			.id(user.getId())
 			.email(user.getEmail())
@@ -76,11 +78,13 @@ public class UserJpo {
 			.phone(user.getPhone())
 			.birthYear(user.getBirthYear())
 			.gender(user.getGender())
-			.role(user.getRole())
+			.roles(rolesString)
 			.loginFailCount(user.getLoginFailCount())
 			.lastLoginTime(user.getLastLoginTime())
 			.lastLoginFailTime(user.getLastLoginFailTime())
-			.userWorkspaces(user.getUserWorkspaces().stream().map(UserWorkspaceJpo::from).collect(Collectors.toList()))
+			.userWorkspaces(user.getUserWorkspaces() != null ?
+				user.getUserWorkspaces().stream().map(UserWorkspaceJpo::from).collect(Collectors.toList()) :
+				new ArrayList<>())
 			.build();
 	}
 
@@ -95,6 +99,13 @@ public class UserJpo {
 	}
 
 	public User toEntity() {
+		List<Role> roleList = this.roles != null && !this.roles.trim().isEmpty()
+			? Arrays.stream(this.roles.split(","))
+			.map(String::trim)
+			.map(Role::valueOf)
+			.collect(Collectors.toList())
+			: List.of(Role.USER);
+		
 		return User.builder()
 			.id(this.id)
 			.email(this.email)
@@ -103,7 +114,7 @@ public class UserJpo {
 			.phone(this.phone)
 			.birthYear(this.birthYear)
 			.gender(this.gender)
-			.role(this.role)
+			.roles(roleList)
 			.loginFailCount(this.loginFailCount)
 			.lastLoginTime(this.lastLoginTime)
 			.lastLoginFailTime(this.lastLoginFailTime)

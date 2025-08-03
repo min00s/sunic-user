@@ -20,6 +20,6 @@ public class UserLoginRdo {
 	private String name;
 	private String phone;
 	private Integer gender;
-	private Role role;
+	private List<Role> roles;
 	private List<UserWorkspaceRdo> userWorkspaces;
 }

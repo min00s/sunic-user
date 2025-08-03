@@ -15,6 +15,7 @@ import com.sunic.user.spec.user.exception.InvalidCredentialsException;
 import com.sunic.user.spec.user.exception.UserAlreadyExistsException;
 import com.sunic.user.spec.user.exception.UserNotFoundException;
 import com.sunic.user.spec.user.facade.sdo.UserActivateSdo;
+import com.sunic.user.spec.user.facade.sdo.UserAddRoleSdo;
 import com.sunic.user.spec.user.facade.sdo.UserDeactivateByAdminSdo;
 import com.sunic.user.spec.user.facade.sdo.UserJoinSdo;
 import com.sunic.user.spec.user.facade.sdo.UserLoginRdo;
@@ -129,5 +130,14 @@ public class UserLogic {
 		return userStore.findById(userId)
 			.map(User::isAdmin)
 			.orElse(false);
+	}
+
+	@Transactional
+	public void addRoleToUser(UserAddRoleSdo userAddRoleSdo) {
+		User user = userStore.findById(userAddRoleSdo.getUserId())
+			.orElseThrow(() -> new UserNotFoundException("User not found with id: " + userAddRoleSdo.getUserId()));
+
+		User updatedUser = user.addRole(userAddRoleSdo.getRole());
+		userStore.save(updatedUser);
 	}
 }

@@ -1,5 +1,5 @@
 package com.sunic.user.spec.user.entity;
 
 public enum Role {
-	USER, ADMIN
+	USER, ADMIN, CONTENTADMIN, COMMUNITYADMIN
 }

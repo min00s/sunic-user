@@ -19,7 +19,7 @@ public class DeactivatedUser {
 	private String email;
 	private String name;
 	private String password;
-	private Role role;
+	private List<Role> roles;
 	private String phone;
 	private String birthYear;
 	private Integer gender;
@@ -33,7 +33,7 @@ public class DeactivatedUser {
 			.email(user.getEmail())
 			.name(user.getName())
 			.password(user.getPassword())
-			.role(user.getRole())
+			.roles(user.getRoles())
 			.phone(user.getPhone())
 			.birthYear(user.getBirthYear())
 			.gender(user.getGender())

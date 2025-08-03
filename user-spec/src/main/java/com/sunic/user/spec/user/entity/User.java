@@ -1,6 +1,7 @@
 package com.sunic.user.spec.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class User {
 	private String phone;
 	private String birthYear;
 	private Integer gender;
-	private Role role;
+	private List<Role> roles;
 	private List<UserWorkspace> userWorkspaces;
 	private Integer loginFailCount;
 	private LocalDateTime lastLoginTime;
@@ -42,6 +43,13 @@ public class User {
 	}
 
 	public static User create(UserRegisterSdo userRegisterSdo, String password) {
+		List<Role> defaultRoles = new ArrayList<>();
+		if (userRegisterSdo.getRole() != null) {
+			defaultRoles.add(userRegisterSdo.getRole());
+		} else {
+			defaultRoles.add(Role.USER);
+		}
+		
 		return User.builder()
 			.email(userRegisterSdo.getEmail())
 			.name(userRegisterSdo.getName())
@@ -49,7 +57,7 @@ public class User {
 			.phone(userRegisterSdo.getPhone())
 			.birthYear(userRegisterSdo.getBirthYear())
 			.gender(userRegisterSdo.getGender())
-			.role(userRegisterSdo.getRole() != null ? userRegisterSdo.getRole() : Role.USER)
+			.roles(defaultRoles)
 			.loginFailCount(0)
 			.build();
 	}
@@ -61,7 +69,7 @@ public class User {
 			.name(deactivatedUser.getName())
 			.password(deactivatedUser.getPassword())
 			.phone(deactivatedUser.getPhone())
-			.role(deactivatedUser.getRole())
+			.roles(deactivatedUser.getRoles())
 			.birthYear(deactivatedUser.getBirthYear())
 			.gender(deactivatedUser.getGender())
 			.loginFailCount(0)
@@ -78,7 +86,7 @@ public class User {
 			.phone(phone)
 			.birthYear(birthYear)
 			.gender(gender)
-			.role(this.role)
+			.roles(this.roles)
 			.userWorkspaces(this.userWorkspaces)
 			.loginFailCount(this.loginFailCount)
 			.lastLoginTime(this.lastLoginTime)
@@ -95,7 +103,7 @@ public class User {
 			.phone(this.phone)
 			.birthYear(this.birthYear)
 			.gender(this.gender)
-			.role(this.role)
+			.roles(this.roles)
 			.userWorkspaces(this.userWorkspaces)
 			.loginFailCount(this.loginFailCount)
 			.lastLoginTime(this.lastLoginTime)
@@ -110,12 +118,38 @@ public class User {
 			.name(this.name)
 			.phone(this.phone)
 			.gender(this.gender)
-			.role(this.role)
+			.roles(this.roles)
 			.userWorkspaces(this.userWorkspaces.stream().map(UserWorkspace::toRdo).collect(Collectors.toList()))
 			.build();
 	}
 
 	public boolean isAdmin() {
-		return this.role == Role.ADMIN;
+		return this.roles != null && this.roles.contains(Role.ADMIN);
+	}
+
+	public boolean hasRole(Role role) {
+		return this.roles != null && this.roles.contains(role);
+	}
+
+	public User addRole(Role role) {
+		List<Role> newRoles = new ArrayList<>(this.roles != null ? this.roles : new ArrayList<>());
+		if (!newRoles.contains(role)) {
+			newRoles.add(role);
+		}
+
+		return User.builder()
+			.id(this.id)
+			.email(this.email)
+			.name(this.name)
+			.password(this.password)
+			.phone(this.phone)
+			.birthYear(this.birthYear)
+			.gender(this.gender)
+			.roles(newRoles)
+			.userWorkspaces(this.userWorkspaces)
+			.loginFailCount(this.loginFailCount)
+			.lastLoginTime(this.lastLoginTime)
+			.lastLoginFailTime(this.lastLoginFailTime)
+			.build();
 	}
 }

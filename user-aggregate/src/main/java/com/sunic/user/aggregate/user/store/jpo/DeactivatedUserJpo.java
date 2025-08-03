@@ -62,7 +62,8 @@ public class DeactivatedUserJpo {
 			.birthYear(deactivatedUser.getBirthYear())
 			.gender(deactivatedUser.getGender())
 			.loginFailCount(deactivatedUser.getLoginFailCount())
-			.userWorkspaces(deactivatedUser.getUserWorkspaces().stream().map(UserWorkspaceJpo::from).collect(Collectors.toList()))
+			.userWorkspaces(
+				deactivatedUser.getUserWorkspaces().stream().map(UserWorkspaceJpo::from).collect(Collectors.toList()))
 			.build();
 	}
 

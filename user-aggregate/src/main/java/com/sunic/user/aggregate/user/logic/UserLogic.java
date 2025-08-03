@@ -75,7 +75,7 @@ public class UserLogic {
 	}
 
 	public void deactivateUserByUser(Integer userId) {
-		if(userId == null) {
+		if (userId == null) {
 			throw new InvalidCredentialsException("Invalid user id");
 		}
 

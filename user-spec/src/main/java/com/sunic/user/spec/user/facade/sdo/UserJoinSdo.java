@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class UserJoinSdo {
-    private Integer userId;
-    private Integer workspaceId;
+	private Integer userId;
+	private Integer workspaceId;
 }

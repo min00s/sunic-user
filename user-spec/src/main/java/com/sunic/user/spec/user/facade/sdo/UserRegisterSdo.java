@@ -1,6 +1,7 @@
 package com.sunic.user.spec.user.facade.sdo;
 
 import com.sunic.user.spec.user.entity.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,11 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class UserRegisterSdo {
-    private String email;
-    private String name;
-    private String password;
-    private String phone;
-    private String birthYear;
-    private Integer gender;
-    private Role role;
+	private String email;
+	private String name;
+	private String password;
+	private String phone;
+	private String birthYear;
+	private Integer gender;
+	private Role role;
 }

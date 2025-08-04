@@ -46,9 +46,6 @@ public class UserProfileJpo {
 	@Column(length = 500)
 	private String profileImgUrl;
 
-	@Column(length = 100)
-	private String enrollUser;
-
 	public static UserProfileJpo from(UserProfile userProfile) {
 		return UserProfileJpo.builder()
 			.id(userProfile.getId())
@@ -60,7 +57,6 @@ public class UserProfileJpo {
 			.majorCategory(userProfile.getMajorCategory())
 			.majorName(userProfile.getMajorName())
 			.profileImgUrl(userProfile.getProfileImgUrl())
-			.enrollUser(userProfile.getEnrollUser())
 			.build();
 	}
 
@@ -75,7 +71,6 @@ public class UserProfileJpo {
 			.majorCategory(this.majorCategory)
 			.majorName(this.majorName)
 			.profileImgUrl(this.profileImgUrl)
-			.enrollUser(this.enrollUser)
 			.build();
 	}
 }

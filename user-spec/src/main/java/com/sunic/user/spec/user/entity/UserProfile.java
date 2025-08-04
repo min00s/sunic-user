@@ -21,7 +21,6 @@ public class UserProfile {
 	private String majorCategory;
 	private String majorName;
 	private String profileImgUrl;
-	private String enrollUser;
 
 	public static UserProfile create(Integer userId, UserProfileCdo userProfileCdo) {
 		return UserProfile.builder()
@@ -33,7 +32,6 @@ public class UserProfile {
 			.majorCategory(userProfileCdo.getMajorCategory())
 			.majorName(userProfileCdo.getMajorName())
 			.profileImgUrl(userProfileCdo.getProfileImgUrl())
-			.enrollUser(userProfileCdo.getEnrollUser())
 			.build();
 	}
 
@@ -49,7 +47,6 @@ public class UserProfile {
 			.majorCategory(majorCategory)
 			.majorName(majorName)
 			.profileImgUrl(profileImgUrl)
-			.enrollUser(enrollUser)
 			.build();
 	}
 }

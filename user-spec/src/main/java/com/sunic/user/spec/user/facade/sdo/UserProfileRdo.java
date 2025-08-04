@@ -18,5 +18,4 @@ public class UserProfileRdo {
 	private String majorCategory;
 	private String majorName;
 	private String profileImgUrl;
-	private String enrollUser;
 }

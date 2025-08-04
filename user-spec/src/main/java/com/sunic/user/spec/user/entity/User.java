@@ -110,16 +110,7 @@ public class User {
 
 	public UserLoginRdo toLoginRdo() {
 		UserProfileRdo userProfileRdo = this.userProfile != null ?
-			UserProfileRdo.builder()
-				.id(this.userProfile.getId())
-				.nickName(this.userProfile.getNickName())
-				.univName(this.userProfile.getUnivName())
-				.univYear(this.userProfile.getUnivYear())
-				.univSemester(this.userProfile.getUnivSemester())
-				.majorCategory(this.userProfile.getMajorCategory())
-				.majorName(this.userProfile.getMajorName())
-				.profileImgUrl(this.userProfile.getProfileImgUrl())
-				.build() : null;
+			this.userProfile.toRdo() : null;
 		
 		return UserLoginRdo.builder()
 			.id(this.id)

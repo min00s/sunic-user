@@ -17,4 +17,5 @@ public class UserProfileUdo {
 	private String majorCategory;
 	private String majorName;
 	private String profileImgUrl;
+	private String enrollReason;
 }

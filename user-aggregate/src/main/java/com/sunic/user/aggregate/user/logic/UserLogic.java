@@ -50,6 +50,7 @@ public class UserLogic {
 		}
 	}
 
+	@Transactional
 	public UserLoginRdo loginUser(UserLoginSdo userLoginSdo) {
 		User user = userStore.findByEmail(userLoginSdo.getEmail())
 			.orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
@@ -115,7 +116,7 @@ public class UserLogic {
 	}
 
 	@Transactional
-	private void deactivateUser(int userId, DeactivationReason deactivationReason) {
+	protected void deactivateUser(int userId, DeactivationReason deactivationReason) {
 		User user = userStore.findById(userId)
 			.orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 

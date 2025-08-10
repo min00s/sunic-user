@@ -1,0 +1,7 @@
+// PostRepository.java
+import com.sunic.post.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PostRepository extends JpaRepository<Post, Long> {
+    // 기본 CRUD 메서드만 존재
+}

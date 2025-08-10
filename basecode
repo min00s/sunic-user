@@ -27,7 +27,55 @@ import com.sunic.user.spec.userworkspace.exception.UserWorkspaceAlreadyExistsExc
 import com.sunic.user.spec.userworkspace.exception.WorkspaceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
+// EmailService.java
+import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
 
+@Service
+// UserService.java
+@Service
+@RequiredArgsConstructor
+public class UserService {
+    private final UserRepository userRepository;
+    private final EmailService emailService; // EmailService 의존성 주입
+
+    @Transactional
+    public void requestEmailVerification(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 1. 랜덤 인증 코드 생성
+        String verificationCode = generateRandomCode(); 
+        
+        // 2. 생성된 코드를 사용자 정보에 저장
+        user.setVerificationCode(verificationCode);
+        userRepository.save(user);
+
+        // 3. EmailService를 통해 인증 메일 발송
+        emailService.sendVerificationEmail(user.getEmail(), verificationCode);
+    }
+
+    private String generateRandomCode() {
+        // 6자리 랜덤 숫자 생성 로직
+        return String.valueOf((int) (Math.random() * 899999) + 100000);
+    }
+    // ...
+}
+@RequiredArgsConstructor
+public class EmailService {
+
+    private final JavaMailSender mailSender; // Spring의 메일 발송 의존성 주입
+
+    public void sendVerificationEmail(String toEmail, String verificationCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("[SUNIC] 이메일 인증을 완료해주세요.");
+        message.setText("인증 코드: " + verificationCode);
+        mailSender.send(message);
+    }
+}
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

@@ -1,0 +1,16 @@
+// ReportService.java
+@Service
+@RequiredArgsConstructor
+public class ReportService {
+    
+    // 문제점: 이 메서드는 30초 이상 걸리며, 끝날 때까지 HTTP 연결을 물고 있음
+    public void generateMonthlyReport() {
+        try {
+            System.out.println("리포트 생성 시작...");
+            Thread.sleep(30000); // 30초가 걸리는 무거운 작업이라고 가정
+            System.out.println("리포트 생성 완료!");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}

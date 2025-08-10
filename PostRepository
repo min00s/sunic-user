@@ -1,7 +1,31 @@
 // PostRepository.java
 import com.sunic.post.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    // 기본 CRUD 메서드만 존재
+    
+    // 추가된 쿼리 메서드: 메서드 이름만으로 JPA가 자동으로 쿼리 생성
+    // 제목(Title) 또는 내용(Content)에 특정 키워드(keyword)가 포함된 게시물을 검색 (대소문자 무시)
+    Page<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String titleKeyword, String contentKeyword, Pageable pageable);
+}
+
+// PostService.java
+@Service
+@RequiredArgsConstructor
+public class PostService {
+    private final PostRepository postRepository;
+
+    // ... 기존 getAllPosts 메서드 ...
+
+    // 검색 로직을 처리하는 새로운 서비스 메서드
+    public Page<PostDto> searchPosts(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllPosts(pageable); // 검색어가 없으면 전체 목록 반환
+        }
+        
+        Page<Post> posts = postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, pageable);
+        return posts.map(post -> new PostDto(post.getId(), post.getTitle(), post.getAuthorName()));
+    }
 }

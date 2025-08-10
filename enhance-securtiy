@@ -1,0 +1,15 @@
+// JwtProvider.java
+import io.jsonwebtoken.Jwts;
+import org.springframework.stereotype.Component;
+
+@Component
+public class JwtProvider {
+    
+    // 문제점: 아주 중요한 시크릿 키가 소스 코드에 하드코딩되어 있음
+    private final String secretKey = "my-super-secret-key-that-is-very-long-and-should-not-be-here-at-all";
+
+    public String createToken(String subject) {
+        // secretKey를 사용해 토큰 생성
+        return Jwts.builder().setSubject(subject).signWith(SignatureAlgorithm.HS512, secretKey).compact();
+    }
+}

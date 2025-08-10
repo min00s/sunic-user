@@ -1,15 +1,23 @@
+# resources/application.yml
+jwt:
+  secret-key: "this-is-a-much-safer-key-retrieved-from-the-configuration-file"
 // JwtProvider.java
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtProvider {
+
+    private final String secretKey;
     
-    // 문제점: 아주 중요한 시크릿 키가 소스 코드에 하드코딩되어 있음
-    private final String secretKey = "my-super-secret-key-that-is-very-long-and-should-not-be-here-at-all";
+    // 개선: 생성자를 통해 application.yml에 정의된 값을 주입받음
+    public JwtProvider(@Value("${jwt.secret-key}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     public String createToken(String subject) {
-        // secretKey를 사용해 토큰 생성
+        // 주입받은 secretKey를 사용해 토큰 생성
         return Jwts.builder().setSubject(subject).signWith(SignatureAlgorithm.HS512, secretKey).compact();
     }
 }

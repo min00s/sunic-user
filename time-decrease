@@ -1,14 +1,28 @@
+// Application.java
+import org.springframework.scheduling.annotation.EnableAsync;
+// ... other imports
+
+@EnableAsync // 비동기 메서드(@Async) 기능을 활성화
+@SpringBootApplication
+public class Application {
+    // ...
+}
 // ReportService.java
+import org.springframework.scheduling.annotation.Async;
+// ... other imports
+
 @Service
 @RequiredArgsConstructor
 public class ReportService {
     
-    // 문제점: 이 메서드는 30초 이상 걸리며, 끝날 때까지 HTTP 연결을 물고 있음
+    // 개선: @Async를 붙여 이 메서드가 호출되면 즉시 리턴하고, 
+    // 실제 작업은 Spring이 관리하는 별도 스레드에서 수행됨
+    @Async
     public void generateMonthlyReport() {
         try {
-            System.out.println("리포트 생성 시작...");
-            Thread.sleep(30000); // 30초가 걸리는 무거운 작업이라고 가정
-            System.out.println("리포트 생성 완료!");
+            System.out.println("리포트 생성 시작... (실행 스레드: " + Thread.currentThread().getName() + ")");
+            Thread.sleep(30000); 
+            System.out.println("리포트 생성 완료! (실행 스레드: " + Thread.currentThread().getName() + ")");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
